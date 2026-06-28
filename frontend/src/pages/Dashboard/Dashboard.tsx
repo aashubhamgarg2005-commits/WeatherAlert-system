@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import WeatherCard from "../../components/cards/WeatherCard";
 import TemperatureChart from "../../components/charts/TemperatureChart";
 import AlertCard from "../../components/cards/AlertCard";
-import { getUserProfile, getTodayWeather, getTodayAlert } from "../../services/weatherService";
+import { getUserProfile, getTodayWeather, getTodayAlert, getWeatherIcon } from "../../services/weatherService";
 
 function Dashboard() {
   const [weather, setWeather] = useState<any>(null);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [city, setCity] = useState<string>("");
+  const [weatherIcon, setWeatherIcon] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,6 +23,10 @@ function Dashboard() {
 
         const alertData = await getTodayAlert(cityName);
         setAlerts(alertData.alerts || []);
+
+        const iconData = await getWeatherIcon(cityName);
+        setWeatherIcon(iconData?.weather_icon?.weather_icon_url || "");
+
       } catch (err) {
         console.error("Dashboard load error:", err);
       } finally {
@@ -35,9 +40,16 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">
-        Dashboard — {city}
-      </h1>
+      <div className="flex items-center gap-4">
+        <h1 className="text-3xl font-bold">Dashboard — {city}</h1>
+        {weatherIcon && (
+          <img
+            src={weatherIcon.startsWith("//") ? `https:${weatherIcon}` : weatherIcon}
+            alt="weather icon"
+            className="w-12 h-12"
+          />
+        )}
+      </div>
 
       {/* Weather Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

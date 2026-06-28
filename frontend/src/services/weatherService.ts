@@ -66,3 +66,8 @@ export const updatePreferences = async (data: object) => {
   const response = await api.put("/auth/preferences", data);
   return response.data;
 };
+
+export const getWeatherIcon = async (city: string) => {
+  const response = await api.get(`/alert/weather_icon/${city}`);
+  return response.data;
+};
